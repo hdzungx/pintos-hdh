@@ -5,6 +5,9 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/synch.h"
+#ifdef VM
+#include "vm/page.h"
+#endif
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -123,6 +126,10 @@ struct thread
     struct file* exec_file;		/* pointer to the file that this thread will execute */
 #endif
 
+#ifdef VM
+    SupPageTable *spt;
+    void *esp;
+#endif
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };

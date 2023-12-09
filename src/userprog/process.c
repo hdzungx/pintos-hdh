@@ -20,6 +20,11 @@
 #include "threads/vaddr.h"
 #include "threads/malloc.h"
 
+#ifdef VM
+#include "vm/frame.h"
+#include "vm/page.h"
+#endif
+
 #define MAX_ARGS 128
 
 static thread_func start_process NO_RETURN;
@@ -325,6 +330,9 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
+#ifdef VM
+  t->spt = spt_create ();
+#endif
   if (t->pagedir == NULL) 
     goto done;
   process_activate ();
@@ -506,6 +514,12 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+#ifdef VM
+      struct thread *cur = thread_current ();
+      if (spt_add_filesys (cur->spt, upage, file, ofs,
+    			   page_read_bytes, page_zero_bytes, writable) == false)
+	return false;
+#else
       /* Get a page of memory. */
       uint8_t *kpage = palloc_get_page (PAL_USER);
       if (kpage == NULL)
@@ -525,11 +539,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
           palloc_free_page (kpage);
           return false; 
         }
-
+#endif
       /* Advance. */
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
+#ifdef VM
+      ofs += PGSIZE;
+#endif
     }
   return true;
 }
@@ -542,14 +559,23 @@ setup_stack (void **esp)
   uint8_t *kpage;
   bool success = false;
 
+#ifdef VM
+  kpage = frame_alloc (PAL_USER | PAL_ZERO, (void *)PHYS_BASE - PGSIZE);
+#else
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+#endif
+  
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
         *esp = PHYS_BASE;
       else
+#ifdef VM
+        frame_free (kpage);
+#else
         palloc_free_page (kpage);
+#endif    
     }
   return success;
 }
@@ -570,7 +596,12 @@ install_page (void *upage, void *kpage, bool writable)
 
   /* Verify that there's not already a page at that virtual
      address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
+  bool success = (pagedir_get_page (t->pagedir, upage) == NULL);
+  success = success && pagedir_set_page (t->pagedir, upage, kpage, writable);
+#ifdef VM
+  success = success && (spt_get_entry (t->spt, upage) == NULL)
+		    && spt_add_installed (t->spt, upage, kpage);
+#endif
+  return success;
 }
 
