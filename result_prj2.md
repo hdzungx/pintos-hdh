@@ -1,10 +1,7 @@
 ```
 pintos --filesys-size=2 -p ../../examples/echo -a echo -- -f -q run 'echo x'
 Copying ../../examples/echo to scratch partition...
-qemu-system-x86_64 -device isa-debug-exit -hda /tmp/pHCobh_jwg.dsk -m 4 -net none -serial stdio
-WARNING: Image format was not specified for '/tmp/pHCobh_jwg.dsk' and probing guessed raw.
-         Automatically detecting the format is dangerous for raw images, write operations on block 0 will be restricted.
-         Specify the 'raw' format explicitly to remove the restrictions.
+qemu-system-x86_64 -device isa-debug-exit -drive file=/tmp/fd0YxJ29WK.dsk,format=raw,index=0,media=disk -m 4 -net none -serial stdio
 PiLo hda1
 Loading............
 Kernel command line: -f -q extract run 'echo x'
@@ -14,7 +11,7 @@ Pintos booting with 3,968 kB RAM...
 Calibrating timer...  547,225,600 loops/s.
 ide0: unexpected interrupt
 hda: 5,040 sectors (2 MB), model "QM00001", serial "QEMU HARDDISK"
-hda1: 195 sectors (97 kB), Pintos OS kernel (20)
+hda1: 196 sectors (98 kB), Pintos OS kernel (20)
 hda2: 4,096 sectors (2 MB), Pintos file system (21)
 hda3: 94 sectors (47 kB), Pintos scratch (22)
 ide1: unexpected interrupt
@@ -26,97 +23,100 @@ Extracting ustar archive from scratch device into file system...
 Putting 'echo' into the file system...
 Erasing ustar archive...
 Executing 'echo x':
+echo x 
+echo: exit(0)
 Execution of 'echo x' complete.
 Timer: 62 ticks
-Thread: 2 idle ticks, 60 kernel ticks, 0 user ticks
-hda2 (filesys): 26 reads, 192 writes
+Thread: 3 idle ticks, 59 kernel ticks, 0 user ticks
+hda2 (filesys): 61 reads, 192 writes
 hda3 (scratch): 93 reads, 2 writes
-Console: 872 characters output
+Console: 894 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
 ```
 ```
-FAIL tests/userprog/args-none
-FAIL tests/userprog/args-single
-FAIL tests/userprog/args-multiple
-FAIL tests/userprog/args-many
-FAIL tests/userprog/args-dbl-space
-FAIL tests/userprog/sc-bad-sp
-FAIL tests/userprog/sc-bad-arg
-FAIL tests/userprog/sc-boundary
-FAIL tests/userprog/sc-boundary-2
+pass tests/filesys/base/syn-write
+pass tests/userprog/args-none
+pass tests/userprog/args-single
+pass tests/userprog/args-multiple
+pass tests/userprog/args-many
+pass tests/userprog/args-dbl-space
+pass tests/userprog/sc-bad-sp
+pass tests/userprog/sc-bad-arg
+pass tests/userprog/sc-boundary
+pass tests/userprog/sc-boundary-2
 FAIL tests/userprog/sc-boundary-3
-FAIL tests/userprog/halt
-FAIL tests/userprog/exit
-FAIL tests/userprog/create-normal
-FAIL tests/userprog/create-empty
-FAIL tests/userprog/create-null
-FAIL tests/userprog/create-bad-ptr
-FAIL tests/userprog/create-long
-FAIL tests/userprog/create-exists
-FAIL tests/userprog/create-bound
-FAIL tests/userprog/open-normal
-FAIL tests/userprog/open-missing
-FAIL tests/userprog/open-boundary
-FAIL tests/userprog/open-empty
-FAIL tests/userprog/open-null
-FAIL tests/userprog/open-bad-ptr
-FAIL tests/userprog/open-twice
-FAIL tests/userprog/close-normal
-FAIL tests/userprog/close-twice
-FAIL tests/userprog/close-stdin
-FAIL tests/userprog/close-stdout
-FAIL tests/userprog/close-bad-fd
-FAIL tests/userprog/read-normal
-FAIL tests/userprog/read-bad-ptr
-FAIL tests/userprog/read-boundary
-FAIL tests/userprog/read-zero
-FAIL tests/userprog/read-stdout
-FAIL tests/userprog/read-bad-fd
-FAIL tests/userprog/write-normal
-FAIL tests/userprog/write-bad-ptr
-FAIL tests/userprog/write-boundary
-FAIL tests/userprog/write-zero
-FAIL tests/userprog/write-stdin
-FAIL tests/userprog/write-bad-fd
-FAIL tests/userprog/exec-once
-FAIL tests/userprog/exec-arg
-FAIL tests/userprog/exec-bound
+pass tests/userprog/halt
+pass tests/userprog/exit
+pass tests/userprog/create-normal
+pass tests/userprog/create-empty
+pass tests/userprog/create-null
+pass tests/userprog/create-bad-ptr
+pass tests/userprog/create-long
+pass tests/userprog/create-exists
+pass tests/userprog/create-bound
+pass tests/userprog/open-normal
+pass tests/userprog/open-missing
+pass tests/userprog/open-boundary
+pass tests/userprog/open-empty
+pass tests/userprog/open-null
+pass tests/userprog/open-bad-ptr
+pass tests/userprog/open-twice
+pass tests/userprog/close-normal
+pass tests/userprog/close-twice
+pass tests/userprog/close-stdin
+pass tests/userprog/close-stdout
+pass tests/userprog/close-bad-fd
+pass tests/userprog/read-normal
+pass tests/userprog/read-bad-ptr
+pass tests/userprog/read-boundary
+pass tests/userprog/read-zero
+pass tests/userprog/read-stdout
+pass tests/userprog/read-bad-fd
+pass tests/userprog/write-normal
+pass tests/userprog/write-bad-ptr
+pass tests/userprog/write-boundary
+pass tests/userprog/write-zero
+pass tests/userprog/write-stdin
+pass tests/userprog/write-bad-fd
+pass tests/userprog/exec-once
+pass tests/userprog/exec-arg
+pass tests/userprog/exec-bound
 FAIL tests/userprog/exec-bound-2
 FAIL tests/userprog/exec-bound-3
-FAIL tests/userprog/exec-multiple
-FAIL tests/userprog/exec-missing
-FAIL tests/userprog/exec-bad-ptr
-FAIL tests/userprog/wait-simple
-FAIL tests/userprog/wait-twice
-FAIL tests/userprog/wait-killed
-FAIL tests/userprog/wait-bad-pid
-FAIL tests/userprog/multi-recurse
-FAIL tests/userprog/multi-child-fd
-FAIL tests/userprog/rox-simple
-FAIL tests/userprog/rox-child
-FAIL tests/userprog/rox-multichild
-FAIL tests/userprog/bad-read
-FAIL tests/userprog/bad-write
-FAIL tests/userprog/bad-read2
-FAIL tests/userprog/bad-write2
-FAIL tests/userprog/bad-jump
-FAIL tests/userprog/bad-jump2
-FAIL tests/userprog/no-vm/multi-oom
-FAIL tests/filesys/base/lg-create
-FAIL tests/filesys/base/lg-full
-FAIL tests/filesys/base/lg-random
-FAIL tests/filesys/base/lg-seq-block
-FAIL tests/filesys/base/lg-seq-random
-FAIL tests/filesys/base/sm-create
-FAIL tests/filesys/base/sm-full
-FAIL tests/filesys/base/sm-random
-FAIL tests/filesys/base/sm-seq-block
-FAIL tests/filesys/base/sm-seq-random
-FAIL tests/filesys/base/syn-read
-FAIL tests/filesys/base/syn-remove
-FAIL tests/filesys/base/syn-write
-80 of 80 tests failed.
+pass tests/userprog/exec-multiple
+pass tests/userprog/exec-missing
+pass tests/userprog/exec-bad-ptr
+pass tests/userprog/wait-simple
+pass tests/userprog/wait-twice
+pass tests/userprog/wait-killed
+pass tests/userprog/wait-bad-pid
+pass tests/userprog/multi-recurse
+pass tests/userprog/multi-child-fd
+pass tests/userprog/rox-simple
+pass tests/userprog/rox-child
+pass tests/userprog/rox-multichild
+pass tests/userprog/bad-read
+pass tests/userprog/bad-write
+pass tests/userprog/bad-read2
+pass tests/userprog/bad-write2
+pass tests/userprog/bad-jump
+pass tests/userprog/bad-jump2
+pass tests/userprog/no-vm/multi-oom
+pass tests/filesys/base/lg-create
+pass tests/filesys/base/lg-full
+pass tests/filesys/base/lg-random
+pass tests/filesys/base/lg-seq-block
+pass tests/filesys/base/lg-seq-random
+pass tests/filesys/base/sm-create
+pass tests/filesys/base/sm-full
+pass tests/filesys/base/sm-random
+pass tests/filesys/base/sm-seq-block
+pass tests/filesys/base/sm-seq-random
+pass tests/filesys/base/syn-read
+pass tests/filesys/base/syn-remove
+pass tests/filesys/base/syn-write
+3 of 80 tests failed.
 make: *** [../../tests/Make.tests:27: check] Error 1
 ```
